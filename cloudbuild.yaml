@@ -8,6 +8,15 @@ steps:
     env:
       - 'SPARK_VER=${_SPARK_VER}'        
     
+  - name: gcr.io/cloud-builders/docker
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        ./bin/docker-image-tool.sh -r gcr.io/$PROJECT_ID -t $$SPARK_VER build        
+    env:
+      - 'SPARK_VER=${_SPARK_VER}'  
+    
   - name: 'gcr.io/$PROJECT_ID/scala-sbt'
     entrypoint: bash
     args:
@@ -16,14 +25,7 @@ steps:
         ./build/sbt package
     timeout: 20m0s
 
-  - name: gcr.io/cloud-builders/docker
-    entrypoint: bash
-    args:
-      - '-c'
-      - |
-        ./bin/docker-image-tool.sh -r gcr.io/$PROJECT_ID -t $$SPARK_VER build        
-    env:
-      - 'SPARK_VER=${_SPARK_VER}'      
+      
 
 tags: ['cloud-build-spark']
 images: ['gcr.io/$PROJECT_ID/spark']
